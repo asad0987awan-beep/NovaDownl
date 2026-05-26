@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova Downloader</title>
+<style>*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+
+body{ background:#f1f5f9; color:white; display:flex; justify-content:center; align-items:center; min-height:100vh; padding:20px; }
+
+.container{ width:100%; max-width:500px; background:white; border:1px solid #e2e8f0; padding:25px; border-radius:20px; box-shadow:0 0 20px rgba(0,0,0,0.4); }
+
+h1{ text-align:center; margin-bottom:10px; color:#0f172a; }
+
+p{ text-align:center; margin-bottom:20px; color:#cbd5e1; }
+
+input{ width:100%; padding:14px; border:none; border-radius:12px; background:#f8fafc; border:1px solid #cbd5e1; color:#0f172a; color:white; font-size:15px; margin-bottom:15px; }
+
+button{ width:100%; padding:14px; border:none; border-radius:12px; background:#2563eb; box-shadow:none; color:white; font-size:16px; font-weight:bold; cursor:pointer; transition:0.3s; }
+
+button:hover{ background:#0891b2; }
+
+.result{ margin-top:20px; background:#f8fafc; border:1px solid #cbd5e1; color:#0f172a; padding:15px; border-radius:12px; display:none; }
+
+.result h3{ margin-bottom:10px; color:#22d3ee; }
+
+.download-btn{ margin-top:10px; background:#10b981; }
+
+.download-btn:hover{ background:#059669; }
+
+.apps{ margin-top:20px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+
+.app{ background:#f8fafc; border:1px solid #cbd5e1; color:#0f172a; padding:10px; text-align:center; border-radius:10px; font-size:14px; }
+
+.footer{ text-align:center; margin-top:20px; font-size:13px; color:#94a3b8; } </style>
+
+</head>
+<body><div class="container">
+<h1>Nova Downloader</h1>
+<p>Download videos from social links</p><input type="text" id="videoLink" placeholder="Paste YouTube, TikTok, Facebook link..."><button onclick="generateDownload()">Generate Download</button>
+
+<div class="result" id="resultBox">
+<h3>Video Ready</h3>
+<p id="videoTitle">Your video link detected.</p>
+<button class="download-btn" onclick="downloadVideo()">Download Video</button>
+</div><div class="apps">
+<div class="app">YouTube</div>
+<div class="app">TikTok</div>
+<div class="app">Facebook</div>
+<div class="app">Instagram</div>
+<div class="app">Twitter/X</div>
+<div class="app">Likee</div>
+</div><div style="margin-top:20px;background:#f1f5f9;padding:15px;border-radius:12px;">
+<h3 style="margin-bottom:10px;color:#0f172a;">Extra Tools</h3><input type="text" id="qrText" placeholder="Enter text for QR Code">
+<button onclick="generateQR()">Generate QR</button>
+<img id="qrImage" style="width:100%;margin-top:10px;border-radius:10px;display:none;"><input type="text" id="passwordLength" placeholder="Password Length e.g 12" style="margin-top:15px;">
+<button onclick="generatePassword()">Generate Password</button>
+<div class="result" id="passwordBox" style="display:block;margin-top:10px;min-height:40px;"></div><input type="text" id="weatherCity" placeholder="Enter city for weather" style="margin-top:15px;">
+<button onclick="getWeather()">Check Weather</button>
+<div class="result" id="weatherBox" style="display:block;margin-top:10px;min-height:40px;"></div>
+</div><div class="footer">
+Made with Nova AI • SPCK Ready
+</div>
+</div><script>
+
+// ===== API KEYS =====
+// Apni APIs yahan paste karo
+
+const GEMINI_API_KEY = "PASTE_GEMINI_API_KEY";
+const WEATHER_API_KEY = "PASTE_WEATHER_API_KEY";
+
+// ====================
+function generateDownload(){
+let link = document.getElementById('videoLink').value;
+let result = document.getElementById('resultBox');
+let title = document.getElementById('videoTitle');
+
+if(link.trim()===''){
+alert('Please paste a video link');
+return;
+}
+
+result.style.display='block';
+
+title.innerText='Link detected successfully: '+link;
+}
+
+function downloadVideo(){
+alert('Video downloading requires backend/server support. This is frontend demo UI.');
+}
+
+function generateQR(){
+let text = document.getElementById('qrText').value;
+let qr = document.getElementById('qrImage');
+
+if(text===''){
+alert('Enter text first');
+return;
+}
+
+qr.style.display='block';
+qr.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+encodeURIComponent(text);
+}
+
+function generatePassword(){
+let len = document.getElementById('passwordLength').value || 12;
+let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%';
+let pass='';
+
+for(let i=0;i<len;i++){
+pass += chars.charAt(Math.floor(Math.random()*chars.length));
+}
+
+document.getElementById('passwordBox').innerText = pass;
+}
+
+async function getWeather(){
+let city = document.getElementById('weatherCity').value;
+let box = document.getElementById('weatherBox');
+
+if(city===''){
+alert('Enter city name');
+return;
+}
+
+if(WEATHER_API_KEY==='PASTE_WEATHER_API_KEY'){
+box.innerText='Add your OpenWeather API key first.';
+return;
+}
+
+try{
+let response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`);
+let data = await response.json();
+
+box.innerText = `🌡 Temp: ${data.main.temp}°C
+☁ Weather: ${data.weather[0].main}`;
+}catch(e){
+box.innerText='Weather not found';
+}
+}
+</script></body>
+</html>
